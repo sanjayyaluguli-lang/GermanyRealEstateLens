@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/PageHeader";
 import { ProfileForm } from "@/components/ProfileForm";
 import { requireUser } from "@/lib/auth/session";
 import { getProfile } from "@/lib/data/profile";
@@ -7,11 +8,8 @@ export default async function ProfilePage() {
   const user = await requireUser();
   const [{ t, lang }, p] = await Promise.all([getT(), getProfile(user.id)]);
   return (
-    <div className="mx-auto max-w-4xl space-y-5">
-      <div>
-        <h1 className="h1">{t.profile.title}</h1>
-        <p className="mt-1 text-sm text-slate-600">{t.profile.intro}</p>
-      </div>
+    <div className="space-y-8">
+      <PageHeader eyebrow={t.nav.profile} title={t.profile.title} lede={t.profile.intro} />
       <ProfileForm
         lang={lang}
         initial={{

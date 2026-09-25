@@ -37,3 +37,12 @@ export function formatNum(n: number | null | undefined, lang: Lang, digits = 1) 
 }
 
 export type { Dictionary };
+
+/** Short money label for chart axes: "250 Tsd. €" / "1,2 Mio. €" (DE), "€250k" / "€1.2M" (EN). */
+export function formatEurShort(n: number, lang: Lang) {
+  const abs = Math.abs(n);
+  const nf = (v: number, d: number) => new Intl.NumberFormat(locale(lang), { maximumFractionDigits: d }).format(v);
+  if (abs >= 1_000_000) return lang === "en" ? `€${nf(n / 1e6, 1)}M` : `${nf(n / 1e6, 1)} Mio. €`;
+  if (abs >= 1_000) return lang === "en" ? `€${nf(n / 1e3, 0)}k` : `${nf(n / 1e3, 0)} Tsd. €`;
+  return formatEur(n, lang);
+}

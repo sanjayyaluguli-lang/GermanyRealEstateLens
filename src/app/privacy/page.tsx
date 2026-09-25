@@ -67,13 +67,15 @@ export default async function PrivacyPage() {
   const { t, lang } = await getT();
   const sections = lang === "en" ? EN : DE;
   return (
-    <article className="mx-auto max-w-3xl space-y-5">
-      <h1 className="h1">{t.privacy.title}</h1>
-      <p className="text-xs text-slate-500">Version {PRIVACY_VERSION}</p>
+    <article className="card card-pad mx-auto max-w-3xl space-y-6 sm:p-10">
+      <header className="space-y-1.5">
+        <p className="eyebrow">Version {PRIVACY_VERSION}</p>
+        <h1 className="h1">{t.privacy.title}</h1>
+      </header>
       {sections.map(([h, body]) => (
-        <section key={h} className="space-y-1">
-          <h2 className="h2">{h}</h2>
-          <p className="text-sm leading-relaxed text-slate-700">{body}</p>
+        <section key={h} className="space-y-1.5 border-t border-line pt-5">
+          <h2 className="h2 text-base">{h}</h2>
+          <p className="max-w-[68ch] text-[15px] leading-relaxed text-ink-2">{body}</p>
         </section>
       ))}
     </article>

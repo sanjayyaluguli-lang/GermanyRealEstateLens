@@ -1,3 +1,4 @@
+import { AuthShell } from "@/components/AuthShell";
 import { redirect } from "next/navigation";
 import { RegisterForm } from "@/components/AuthForms";
 import { getCurrentUser } from "@/lib/auth/session";
@@ -7,8 +8,8 @@ export default async function RegisterPage() {
   if (await getCurrentUser()) redirect("/dashboard");
   const { lang } = await getT();
   return (
-    <div className="mx-auto max-w-md">
+    <AuthShell>
       <RegisterForm lang={lang} />
-    </div>
+    </AuthShell>
   );
 }

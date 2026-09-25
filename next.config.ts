@@ -31,6 +31,8 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
+  // The default bottom-left spot covers the sidebar's language switch.
+  devIndicators: { position: "bottom-right" },
   serverExternalPackages: ["@node-rs/argon2"],
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

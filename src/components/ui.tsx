@@ -2,6 +2,7 @@
 
 import { startTransition } from "react";
 import { useFormStatus } from "react-dom";
+import { CircleCheck, CircleX, TriangleAlert } from "lucide-react";
 import type { Status } from "@/lib/calc/engine";
 
 export function SubmitButton({
@@ -30,32 +31,45 @@ export function FormMessage({ state }: { state?: { error?: string; ok?: string }
   if (!state) return null;
   if (state.error)
     return (
-      <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-800">
-        {state.error}
+      <p role="alert" className="flex items-start gap-2 rounded-lg bg-bad-soft px-3 py-2.5 text-sm text-bad">
+        <CircleX className="mt-0.5 size-4 shrink-0" aria-hidden />
+        <span>{state.error}</span>
       </p>
     );
   if (state.ok)
     return (
-      <p role="status" className="rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-        {state.ok}
+      <p role="status" className="flex items-start gap-2 rounded-lg bg-good-soft px-3 py-2.5 text-sm text-good">
+        <CircleCheck className="mt-0.5 size-4 shrink-0" aria-hidden />
+        <span>{state.ok}</span>
       </p>
     );
   return null;
 }
 
-const DOT: Record<Status, string> = {
-  green: "bg-emerald-500",
-  yellow: "bg-amber-400",
-  red: "bg-red-500",
+const STATUS_STYLE: Record<Status, { cls: string; Icon: typeof CircleCheck }> = {
+  green: { cls: "bg-good-soft text-good", Icon: CircleCheck },
+  yellow: { cls: "bg-warn-soft text-warn", Icon: TriangleAlert },
+  red: { cls: "bg-bad-soft text-bad", Icon: CircleX },
 };
 
-export function StatusDot({ status, label }: { status: Status; label: string }) {
+/** Status is always shown as icon + label, never colour alone. */
+export function StatusPill({ status, label, size = "md" }: { status: Status; label: string; size?: "sm" | "md" }) {
+  const { cls, Icon } = STATUS_STYLE[status];
   return (
-    <span className="inline-flex items-center gap-2 text-sm">
-      <span className={`inline-block h-3 w-3 rounded-full ${DOT[status]}`} aria-hidden />
+    <span
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-full font-semibold whitespace-nowrap ${cls} ${
+        size === "sm" ? "px-2 py-0.5 text-xs" : "px-2.5 py-1 text-[13px]"
+      }`}
+    >
+      <Icon className={size === "sm" ? "size-3.5" : "size-4"} aria-hidden />
       {label}
     </span>
   );
+}
+
+/** Kept for existing call sites; renders the pill. */
+export function StatusDot({ status, label }: { status: Status; label: string }) {
+  return <StatusPill status={status} label={label} size="sm" />;
 }
 
 /**

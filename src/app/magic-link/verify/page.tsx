@@ -1,3 +1,4 @@
+import { AuthShell } from "@/components/AuthShell";
 import { MagicLinkConfirmForm } from "@/components/AuthForms";
 import { getT } from "@/lib/i18n/server";
 
@@ -5,12 +6,12 @@ export default async function MagicLinkVerifyPage({ searchParams }: PageProps<"/
   const { token } = await searchParams;
   const { t, lang } = await getT();
   return (
-    <div className="mx-auto max-w-md">
+    <AuthShell>
       {typeof token === "string" ? (
         <MagicLinkConfirmForm lang={lang} token={token} />
       ) : (
-        <p className="card text-sm text-red-700">{t.auth.resetInvalid}</p>
+        <p className="text-sm text-bad">{t.auth.resetInvalid}</p>
       )}
-    </div>
+    </AuthShell>
   );
 }

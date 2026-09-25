@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { ArrowUpRight, GitCompare, Pencil, Plus, Trash2 } from "lucide-react";
 import { removeScenario } from "@/app/actions/data";
-import { StatusDot, SubmitButton } from "@/components/ui";
+import { MiniGauge } from "@/components/MiniGauge";
+import { PageHeader } from "@/components/PageHeader";
+import { StatusPill, SubmitButton } from "@/components/ui";
 import { requireUser } from "@/lib/auth/session";
 import { getBundesland } from "@/lib/calc/regions";
 import { listScenarios } from "@/lib/data/scenarios";
@@ -14,79 +17,118 @@ export default async function ScenariosPage() {
   const eur = (n: number | null) => formatEur(n, lang);
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="h1">{t.scenarios.title}</h1>
-        <Link href="/calculator" className="btn">
-          + {t.dashboard.newCalc}
-        </Link>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow={`${scenarios.length} ${t.scenarios.title}`}
+        title={t.scenarios.title}
+        actions={
+          <Link href="/calculator" className="btn">
+            <Plus className="size-4" aria-hidden />
+            {t.dashboard.newCalc}
+          </Link>
+        }
+      />
+
       {scenarios.length === 0 ? (
-        <p className="card text-sm text-slate-600">{t.dashboard.noScenarios}</p>
+        <div className="card card-pad grid justify-items-start gap-3">
+          <p className="text-sm text-ink-2">{t.dashboard.noScenarios}</p>
+          <Link href="/calculator" className="btn-secondary">
+            <Plus className="size-4" aria-hidden />
+            {t.dashboard.newCalc}
+          </Link>
+        </div>
       ) : (
         <>
-          <form id="compare" action="/scenarios/compare" method="get" className="flex items-center gap-3 text-sm">
-            <button className="btn-secondary">{t.scenarios.compareSelected}</button>
-            <span className="text-slate-500">{t.scenarios.compareHint}</span>
+          <form
+            id="compare"
+            action="/scenarios/compare"
+            method="get"
+            className="flex flex-wrap items-center gap-3 rounded-lg border border-dashed border-line-strong bg-surface px-4 py-3 text-sm"
+          >
+            <button className="btn-secondary btn-sm">
+              <GitCompare className="size-4" aria-hidden />
+              {t.scenarios.compareSelected}
+            </button>
+            <span className="text-muted">{t.scenarios.compareHint}</span>
           </form>
-          <div className="card overflow-x-auto p-0">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs text-slate-500">
+
+          <div className="card overflow-x-auto">
+            <table className="table min-w-[860px]">
+              <thead>
                 <tr>
-                  <th className="px-3 py-2" />
-                  <th className="px-3 py-2">{t.scenarios.name}</th>
-                  <th className="px-3 py-2">{t.scenarios.status}</th>
-                  <th className="px-3 py-2">{t.scenarios.region}</th>
-                  <th className="px-3 py-2 text-right">{t.calc.purchasePrice}</th>
-                  <th className="px-3 py-2 text-right">{t.calc.maxPurchasePrice}</th>
-                  <th className="px-3 py-2 text-right">{t.calc.monthlyCashflow}</th>
-                  <th className="px-3 py-2">{t.scenarios.updated}</th>
-                  <th className="px-3 py-2" />
+                  <th className="w-10" />
+                  <th>{t.scenarios.name}</th>
+                  <th>{t.scenarios.status}</th>
+                  <th className="text-right!">{t.viz.gaugePrice}</th>
+                  <th className="w-40">
+                    {t.viz.gaugePrice} / {t.viz.gaugeMax}
+                  </th>
+                  <th className="text-right!">{t.viz.mResult}</th>
+                  <th>{t.scenarios.updated}</th>
+                  <th />
                 </tr>
               </thead>
               <tbody>
                 {scenarios.map((s) => (
-                  <tr key={s.id} className="border-t border-slate-100 align-middle">
-                    <td className="px-3 py-2">
-                      <input type="checkbox" name="ids" value={s.id} form="compare" aria-label={s.name} />
+                  <tr key={s.id}>
+                    <td>
+                      <input
+                        type="checkbox"
+                        name="ids"
+                        value={s.id}
+                        form="compare"
+                        aria-label={s.name}
+                        className="size-4 accent-[var(--accent)]"
+                      />
                     </td>
-                    <td className="px-3 py-2 font-medium">
-                      <Link href={`/calculator?scenario=${s.id}`} className="hover:underline">
+                    <td className="max-w-64">
+                      <Link href={`/calculator?scenario=${s.id}`} className="block truncate font-semibold hover:text-accent">
                         {s.name}
                       </Link>
+                      <span className="text-xs text-muted">{getBundesland(s.inputs.bundesland)?.name}</span>
                     </td>
-                    <td className="px-3 py-2">
-                      <StatusDot status={s.status} label={t.status[s.status]} />
+                    <td>
+                      <StatusPill status={s.status} label={t.status[s.status]} size="sm" />
                     </td>
-                    <td className="px-3 py-2">{getBundesland(s.inputs.bundesland)?.name}</td>
-                    <td className="px-3 py-2 text-right tabular-nums">{eur(s.inputs.purchasePrice)}</td>
-                    <td className="px-3 py-2 text-right tabular-nums">
-                      {s.results.maxPurchasePrice ? (
-                        <a
-                          className="link"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          href={buildSearchUrl({ bundesland: s.inputs.bundesland, maxPrice: s.results.maxPurchasePrice })}
-                          title={t.calc.searchIs24}
-                        >
-                          {eur(s.results.maxPurchasePrice)} ↗
-                        </a>
-                      ) : (
-                        "—"
-                      )}
+                    <td className="num text-right">{eur(s.inputs.purchasePrice)}</td>
+                    <td>
+                      <div className="grid gap-1">
+                        <MiniGauge
+                          price={s.inputs.purchasePrice}
+                          max={s.results.maxPurchasePrice}
+                          status={s.status}
+                          label={`${t.viz.gaugeMax} ${eur(s.results.maxPurchasePrice)}`}
+                        />
+                        {s.results.maxPurchasePrice ? (
+                          <a
+                            className="inline-flex items-center gap-0.5 text-[11px] text-muted hover:text-accent"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={buildSearchUrl({ bundesland: s.inputs.bundesland, maxPrice: s.results.maxPurchasePrice })}
+                            title={t.calc.searchIs24}
+                          >
+                            {t.viz.gaugeMax} <span className="num">{eur(s.results.maxPurchasePrice)}</span>
+                            <ArrowUpRight className="size-3" aria-hidden />
+                          </a>
+                        ) : (
+                          <span className="text-[11px] text-muted">{t.common.notAchievable}</span>
+                        )}
+                      </div>
                     </td>
-                    <td className={`px-3 py-2 text-right tabular-nums ${s.results.monthlyCashflow < 0 ? "text-red-700" : ""}`}>
+                    <td className={`num text-right ${s.results.monthlyCashflow < 0 ? "text-bad" : "text-good"}`}>
                       {eur(s.results.monthlyCashflow)}
                     </td>
-                    <td className="px-3 py-2 text-xs text-slate-500">{s.updatedAt.toLocaleString(locale(lang))}</td>
-                    <td className="px-3 py-2 text-right">
-                      <div className="flex justify-end gap-2">
-                        <Link href={`/calculator?scenario=${s.id}`} className="btn-secondary px-2 py-1 text-xs">
+                    <td className="text-xs whitespace-nowrap text-muted">{s.updatedAt.toLocaleDateString(locale(lang))}</td>
+                    <td>
+                      <div className="flex justify-end gap-1">
+                        <Link href={`/calculator?scenario=${s.id}`} className="btn-ghost btn-sm" title={t.scenarios.load}>
+                          <Pencil className="size-3.5" aria-hidden />
                           {t.scenarios.load}
                         </Link>
                         <form action={removeScenario}>
                           <input type="hidden" name="id" value={s.id} />
-                          <SubmitButton className="btn-secondary px-2 py-1 text-xs text-red-700">
+                          <SubmitButton className="btn-ghost btn-sm text-bad hover:text-bad">
+                            <Trash2 className="size-3.5" aria-hidden />
                             {t.common.delete}
                           </SubmitButton>
                         </form>

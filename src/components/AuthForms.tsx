@@ -50,7 +50,7 @@ function PasswordField({ label, hint, autoComplete }: { label: string; hint?: st
         maxLength={256}
         className="input"
       />
-      {hint && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
+      {hint && <p className="hint">{hint}</p>}
     </div>
   );
 }
@@ -59,8 +59,8 @@ export function LoginForm({ lang, next, notice }: { lang: Lang; next?: string; n
   const t = getDictionary(lang);
   const [state, action] = useActionState<FormState, FormData>(login, notice ? { ok: notice } : undefined);
   return (
-    <form action={action} className="card space-y-4">
-      <h1 className="h1">{t.auth.loginTitle}</h1>
+    <form action={action} className="space-y-5">
+      <h1 className="h1 text-[26px]!">{t.auth.loginTitle}</h1>
       <FormMessage state={state} />
       {next && <input type="hidden" name="next" value={next} />}
       <EmailField label={t.auth.email} defaultValue={state?.email} />
@@ -74,7 +74,7 @@ export function LoginForm({ lang, next, notice }: { lang: Lang; next?: string; n
           {t.auth.magicLink}
         </Link>
       </div>
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-ink-2">
         {t.auth.noAccount}{" "}
         <Link href="/register" className="link">
           {t.nav.register}
@@ -88,13 +88,13 @@ export function RegisterForm({ lang }: { lang: Lang }) {
   const t = getDictionary(lang);
   const [state, action] = useActionState<FormState, FormData>(register, undefined);
   return (
-    <form action={action} className="card space-y-4">
-      <h1 className="h1">{t.auth.registerTitle}</h1>
+    <form action={action} className="space-y-5">
+      <h1 className="h1 text-[26px]!">{t.auth.registerTitle}</h1>
       <FormMessage state={state} />
       <EmailField label={t.auth.email} defaultValue={state?.email} />
       <PasswordField label={t.auth.password} hint={t.auth.passwordHint} autoComplete="new-password" />
-      <label className="flex items-start gap-2 text-sm">
-        <input type="checkbox" name="acceptPrivacy" required className="mt-1" />
+      <label className="flex items-start gap-2.5 text-[13px] text-ink-2">
+        <input type="checkbox" name="acceptPrivacy" required className="mt-0.5 size-4 shrink-0 accent-[var(--accent)]" />
         <span>
           {t.auth.acceptPrivacy}{" "}
           <Link href="/privacy" target="_blank" className="link">
@@ -103,7 +103,7 @@ export function RegisterForm({ lang }: { lang: Lang }) {
         </span>
       </label>
       <SubmitButton className="btn w-full">{t.auth.submitRegister}</SubmitButton>
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-ink-2">
         {t.auth.haveAccount}{" "}
         <Link href="/login" className="link">
           {t.nav.login}
@@ -120,9 +120,9 @@ export function EmailLinkForm({ lang, kind }: { lang: Lang; kind: "reset" | "mag
     undefined,
   );
   return (
-    <form action={action} className="card space-y-4">
-      <h1 className="h1">{kind === "reset" ? t.auth.forgotTitle : t.auth.magicTitle}</h1>
-      <p className="text-sm text-slate-600">{kind === "reset" ? t.auth.forgotText : t.auth.magicText}</p>
+    <form action={action} className="space-y-5">
+      <h1 className="h1 text-[26px]!">{kind === "reset" ? t.auth.forgotTitle : t.auth.magicTitle}</h1>
+      <p className="text-sm text-ink-2">{kind === "reset" ? t.auth.forgotText : t.auth.magicText}</p>
       <FormMessage state={state} />
       <EmailField label={t.auth.email} defaultValue={state?.email} />
       <SubmitButton className="btn w-full">{t.auth.sendLink}</SubmitButton>
@@ -137,8 +137,8 @@ export function ResetPasswordForm({ lang, token }: { lang: Lang; token: string }
   const t = getDictionary(lang);
   const [state, action] = useActionState<FormState, FormData>(resetPassword, undefined);
   return (
-    <form action={action} className="card space-y-4">
-      <h1 className="h1">{t.auth.resetTitle}</h1>
+    <form action={action} className="space-y-5">
+      <h1 className="h1 text-[26px]!">{t.auth.resetTitle}</h1>
       <FormMessage state={state} />
       <input type="hidden" name="token" value={token} />
       <PasswordField label={t.auth.newPassword} hint={t.auth.passwordHint} autoComplete="new-password" />
@@ -151,9 +151,9 @@ export function MagicLinkConfirmForm({ lang, token }: { lang: Lang; token: strin
   const t = getDictionary(lang);
   const [state, action] = useActionState<FormState, FormData>(redeemMagicLink, undefined);
   return (
-    <form action={action} className="card space-y-4">
-      <h1 className="h1">{t.auth.magicConfirmTitle}</h1>
-      <p className="text-sm text-slate-600">{t.auth.magicConfirmText}</p>
+    <form action={action} className="space-y-5">
+      <h1 className="h1 text-[26px]!">{t.auth.magicConfirmTitle}</h1>
+      <p className="text-sm text-ink-2">{t.auth.magicConfirmText}</p>
       <FormMessage state={state} />
       <input type="hidden" name="token" value={token} />
       <SubmitButton className="btn w-full">{t.auth.magicConfirm}</SubmitButton>

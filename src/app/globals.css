@@ -1,47 +1,213 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens. Identity: German land-registry paperwork — navy ink, a
+ * document blue, cool paper with a faint cadastral grid. Every colour used by
+ * components comes from these tokens so light and dark mode stay consistent.
+ * Chart series colours are the validated blue/orange pair (see dataviz notes
+ * in CLAUDE.md); status colours are reserved for good / warning / critical.
+ */
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --bg: #f3f5f8;
+  --grid: rgba(28, 92, 171, 0.045);
+  --surface: #ffffff;
+  --surface-2: #eef2f7;
+  --ink: #0e1a2b;
+  --ink-2: #3c4a5c;
+  --muted: #66758a;
+  --line: #dce3ec;
+  --line-strong: #c5d0dd;
+  --accent: #1c5cab;
+  --accent-hover: #184f95;
+  --accent-soft: #e3edfa;
+  --on-accent: #ffffff;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-1-wash: rgba(42, 120, 214, 0.1);
+  --good: #1b8f5a;
+  --good-mark: #1f9d63;
+  --good-soft: #e1f4ea;
+  --warn: #9a6400;
+  --warn-mark: #eda100;
+  --warn-soft: #fdf3dc;
+  --bad: #c0352b;
+  --bad-mark: #e34948;
+  --bad-soft: #fbe6e3;
+  --shadow: 0 1px 2px rgba(14, 26, 43, 0.05), 0 4px 16px rgba(14, 26, 43, 0.05);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0c1219;
+    --grid: rgba(85, 152, 231, 0.05);
+    --surface: #141b24;
+    --surface-2: #1b2430;
+    --ink: #e7edf5;
+    --ink-2: #b9c4d2;
+    --muted: #8d9aab;
+    --line: #263241;
+    --line-strong: #34424f;
+    --accent: #5598e7;
+    --accent-hover: #6da7ec;
+    --accent-soft: #16263b;
+    --on-accent: #0c1219;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-1-wash: rgba(57, 135, 229, 0.12);
+    --good: #3cc486;
+    --good-mark: #34b27a;
+    --good-soft: #11281e;
+    --warn: #eab54a;
+    --warn-mark: #e5ae2c;
+    --warn-soft: #2c2412;
+    --bad: #f07a6b;
+    --bad-mark: #ee6150;
+    --bad-soft: #2e1716;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 16px rgba(0, 0, 0, 0.3);
+    color-scheme: dark;
+  }
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-good: var(--good);
+  --color-good-soft: var(--good-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-bad: var(--bad);
+  --color-bad-soft: var(--bad-soft);
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-schibsted), var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+html {
+  background: var(--bg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 @layer components {
   .card {
-    @apply rounded-xl border border-slate-200 bg-white p-5 shadow-sm;
+    @apply rounded-xl border border-line bg-surface;
+    box-shadow: var(--shadow);
   }
-  .input {
-    @apply w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus:border-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/20;
+  .card-pad {
+    @apply p-5 sm:p-6;
   }
-  .label {
-    @apply mb-1 block text-xs font-medium text-slate-600;
-  }
-  .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-md bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800 disabled:opacity-50;
-  }
-  .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-800 hover:bg-slate-50 disabled:opacity-50;
-  }
-  .btn-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-md bg-red-700 px-4 py-2 text-sm font-medium text-white hover:bg-red-800 disabled:opacity-50;
-  }
-  .link {
-    @apply text-emerald-800 underline-offset-2 hover:underline;
+  .eyebrow {
+    @apply font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase;
   }
   .h1 {
-    @apply text-2xl font-semibold tracking-tight;
+    @apply font-display text-[28px] leading-tight font-bold tracking-[-0.02em] sm:text-[32px];
   }
   .h2 {
-    @apply text-lg font-semibold;
+    @apply font-display text-lg leading-snug font-bold tracking-[-0.01em];
+  }
+  .lede {
+    @apply max-w-[62ch] text-[15px] text-ink-2;
+  }
+  .label {
+    @apply mb-1.5 block text-[13px] font-medium text-ink-2;
+    hyphens: auto;
+    overflow-wrap: anywhere;
+  }
+  .hint {
+    @apply mt-1 text-xs text-muted;
+  }
+  .input {
+    @apply w-full rounded-lg border border-line-strong bg-surface px-3 py-2 text-[15px] text-ink transition-colors outline-none placeholder:text-muted focus:border-accent;
+    box-shadow: inset 0 1px 0 rgba(14, 26, 43, 0.03);
+  }
+  .input:focus {
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .input[aria-invalid="true"] {
+    @apply border-bad;
+  }
+  .field-affix {
+    @apply relative flex items-stretch;
+  }
+  .field-affix .input {
+    @apply pr-14 tabular-nums;
+  }
+  .field-affix .affix {
+    @apply pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 font-mono text-xs text-muted;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-on-accent transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line-strong bg-surface px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-bad px-4 py-2 text-sm font-semibold text-surface transition-opacity hover:opacity-90 disabled:opacity-60;
+  }
+  .btn-sm {
+    @apply px-2.5 py-1.5 text-xs;
+  }
+  .link {
+    @apply font-medium text-accent underline-offset-4 hover:underline;
+  }
+  .table {
+    @apply w-full text-sm;
+  }
+  .table th {
+    @apply border-b border-line px-3 py-2.5 text-left font-mono text-[11px] font-medium tracking-[0.08em] whitespace-nowrap text-muted uppercase;
+  }
+  .table td {
+    @apply border-b border-line px-3 py-3 align-middle;
+  }
+  .table tbody tr:last-child td {
+    @apply border-b-0;
+  }
+  .table tbody tr:hover td {
+    background: var(--surface-2);
+  }
+  .num {
+    @apply font-sans tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
   }
 }
